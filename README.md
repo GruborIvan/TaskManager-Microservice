@@ -1,37 +1,39 @@
-TaskManager
-Overview
+# TaskManager
 
-TaskManager is a .NET microservice responsible for task and workflow management within the Five Degrees Neo core banking platform. It powers the task management features displayed on the platform’s main dashboard, allowing users to track and manage tasks related to banking processes. Developed by Five Degrees, TaskManager integrates with the broader Neo suite – a cloud-native, Azure-based microservices platform – to provide a responsive and modular banking solution
-microsoft.com
-. Five Degrees and the Neo platform have been featured by Microsoft in a customer case study for their innovative use of Azure and microservice architecture
-microsoft.com
-.
+## Overview
 
-Technologies Used
+**TaskManager** is a .NET microservice responsible for task and workflow management within the Five Degrees **Neo** core banking platform. It powers the task management features displayed on the platform’s main dashboard, enabling users to track and manage tasks related to various banking processes.
 
-.NET 6 (ASP.NET Core) – The service is built with .NET 6, leveraging ASP.NET Core to expose its functionality as a web API.
+Developed by Five Degrees, TaskManager integrates with the broader Neo suite — a cloud-native, Azure-based microservices platform — to provide a responsive and modular banking solution.
 
-Entity Framework Core – Used as the Object-Relational Mapper (ORM) for data access. EF Core enables database operations through C# objects, supporting code-first design and migrations.
+> 📖 TaskManager and the Neo platform have been featured by Microsoft in a customer case study for their innovative use of Azure and microservice architecture.  
+> [Read the full Microsoft story](https://www.microsoft.com/en/customers/story/1709320069254495348-five-degrees-azure-netherlands)
 
-MediatR – Utilized to implement the mediator pattern for decoupling business logic. MediatR is an in-process messaging library that supports handling of requests/responses, commands, and queries in .NET
-medium.com
-, enabling a CQRS-style separation of concerns.
+## Technologies Used
 
-Domain-Driven Design (DDD) principles – The solution follows a layered architecture with separate Domain, Infrastructure, and API projects, indicating a DDD approach. This separation of concerns helps enforce a clear domain model and persistence ignorance, and together with MediatR supports a clean CQRS pattern for command and query handling.
+- **.NET 6 (ASP.NET Core)**  
+  The service is built using .NET 6, leveraging ASP.NET Core to expose its functionality through a robust and scalable web API.
 
-Part of the Neo Platform
+- **Entity Framework Core**  
+  Acts as the Object-Relational Mapper (ORM) to manage data access. EF Core supports code-first design and migrations to simplify database interactions.
 
-TaskManager operates as one component of the Five Degrees Neo platform. Neo is a state-of-the-art SaaS core banking suite built by Five Degrees
-5square.nl
-. It runs on Microsoft Azure and employs a modular microservices architecture
-microsoft.com
-microsoft.com
-. The platform offers a range of core banking modules – including loan and account management, payments, orchestration, and a task/workflow management system
-microsoft.com
-. TaskManager specifically provides the task and workflow functionality within this ecosystem, contributing to Neo’s goal of delivering adaptive and modern banking experiences.
+- **MediatR**  
+  Implements the mediator pattern to decouple business logic. Supports request/response, commands, and queries using a clean CQRS-style architecture.
 
-Five Degrees introduced Neo to help banks and fintech companies modernize their legacy infrastructure with cloud-native technology
-microsoft.com
-. The Neo platform’s design adheres to Azure-first principles and emphasizes scalability, security, and continuous deployment
-microsoft.com
-. Microsoft highlighted Five Degrees and the Neo platform in an official customer story, showcasing how Neo leverages Azure services to deliver a flexible and resilient core banking solution
+- **Domain-Driven Design (DDD)**  
+  The solution is structured using DDD principles, with separate Domain, Infrastructure, and API layers. This promotes separation of concerns and aligns with modern microservice architecture best practices.
+
+## Part of the Neo Platform
+
+TaskManager is a core component of **Neo**, a modern SaaS core banking suite developed by Five Degrees. Neo is built on **Microsoft Azure** and follows a modular microservices architecture to deliver flexibility and scalability.
+
+The platform includes modules for:
+- Loan and account management
+- Payments
+- Orchestration
+- Task/workflow automation (powered by TaskManager)
+
+Neo empowers banks and fintechs to replace legacy infrastructure with cloud-native solutions that support continuous deployment, high availability, and regulatory compliance.
+
+> 📘 Learn more about Neo and its impact in the official Microsoft case study:  
+> [Five Degrees redefines core banking with Azure](https://www.microsoft.com/en/customers/story/1709320069254495348-five-degrees-azure-netherlands)
