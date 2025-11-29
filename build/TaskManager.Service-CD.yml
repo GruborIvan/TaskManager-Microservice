@@ -1,0 +1,169 @@
+name: $(Build.DefinitionName).$(Build.SourceBranchName).$(BuildID)
+ 
+parameters:
+- name: platformName
+  displayName: Platform Name
+  type: string
+  default: devpfm
+- name: tenantShortName
+  displayName: Tenant short name
+  type: string
+  default: tc1s
+  values:
+  - inf
+  - len
+  - fat
+  - ugly
+  - tc1s
+  - bad
+- name: environmentShortName
+  displayName: Environment Short Name
+  type: string
+  default: sbx
+  values:
+  - sbx
+  - stg
+  - prd
+- name: sharedVariableGroupName
+  displayName: Shared Variable Group Name
+  type: string
+  default: core-ci-vg
+  values:
+  - core-ci-vg
+- name: subscriptionVariableGroupName
+  displayName: Subscription Name
+  type: string
+  default: MY-DEVTST05
+  values:
+  - MY-DEVTST03
+  - MY-DEVTST04
+  - MY-DEVTST05
+- name: reloadedFeedView
+  displayName: Feed view
+  type: string
+  default: Local
+  values:
+  - Local
+  - Integration
+  - Prerelease
+  - Release
+- name: Deployment_level
+  displayName: Deployment level
+  type: string
+  default: env
+  values:
+  - env
+  - tenant
+  - platform
+ 
+- name: VersionTagFilter
+  displayName: VersionTagFilter
+  type: string
+  default: '*'
+
+resources:
+#Add Devops repository where templates are located
+  repositories:
+  - repository: devops
+    type: git
+    name: unity/unity
+    ref: 'main' #always use main branch where stable code is stored 
+ 
+trigger: none
+pool:
+  name: $(pool)
+  vmimage: 'windows-latest'
+variables:
+  - name: VersionTagFilter
+    value: '${{parameters.VersionTagFilter}}'
+  - name: platformName
+    value: ${{ parameters.platformName }}
+  - name: tenantShortName
+    value: ${{ parameters.tenantShortName }}
+  - name: environmentShortName
+    value: ${{ parameters.environmentShortName }}
+  - name: reloadedFeedView
+    value: ${{ parameters.reloadedFeedView }}
+    #VersionTagFilter is defined in parameters
+  - name: VersionTagFilter
+    value: '${{parameters.VersionTagFilter}}'
+  - name: deployWebApps
+    value: true
+  - name: deployDatabases
+    value: true
+  - name: resourceLevel
+    value: '${{parameters.Deployment_level}}' # platform, tenant or env
+ # API Management variables
+  - ${{if ne(variables.resourceLevel, 'platform')}}:
+    - name: apimResourceGroup
+      value: "$(platformName)-$(tenantShortName)-tnt-rg"
+    - name: apimName
+      value: "$(platformName)-$(tenantShortName)-apim"
+  - ${{if eq(variables.resourceLevel, 'platform')}}:
+    - name: apimResourceGroup
+      value: "$(platformName)-platform-rg" # for platform services its $(platformName)-platform-rg
+    - name: apimName
+      value: "$(platformName)-apim" # for platform services its $(platformName)-apim
+  - group: ${{ parameters.sharedVariableGroupName }}
+  - group: ${{ parameters.subscriptionVariableGroupName }}
+   
+    
+stages:
+  - stage: Deploy_Service
+    displayName: 'Deploy service TaskManager.Service'
+    jobs:
+    - template: Pipelines/Templates/Jobs/deployWebAppsJob.yml@devops
+      parameters:
+        repoAlias: 'devops'
+        deployFeature: true
+        runDeploymentJob: true
+        versionTagFilter: $(VersionTagFilter)
+        organization: $(organization)
+        project: ''
+        packageFeedName: $(feedName)
+        packageFeedView: $(reloadedFeedView)
+        packageFeedAccessToken: ${{ coalesce( variables.reloadedFeedAccessToken, '$(System.AccessToken)' ) }}
+        defaultResourceGroupName: "$(platformName)-$(tenantShortName)-$(environmentShortName)-rg"
+        webApps:
+        - ${{if eq(variables.resourceLevel, 'tenant')}}:
+          - packageName: "TaskManager.Service"
+            resourceGroupName: "$(platformName)-$(tenantShortName)-tnt-rg"
+            webAppName: "$(platformName)-$(tenantShortName)-taskmanagersvc"
+            apiName: "taskmanager"
+            apimImport: true
+        - ${{if eq(variables.resourceLevel, 'env')}}:
+          - packageName: "TaskManager.Service"
+            resourceGroupName: "$(platformName)-$(tenantShortName)-$(environmentShortName)-rg"
+            webAppName: "$(platformName)-$(tenantShortName)-$(environmentShortName)-taskmanagersvc"
+            apiName: "taskmanager-$(environmentShortName)"
+            apimImport: true
+    - template: Pipelines/Templates/Jobs/deployDatabasesJob.yml@devops
+      parameters:
+        repoAlias: 'devops'
+        deployFeature: true
+        runDeploymentJob: true
+        versionTagFilter: $(VersionTagFilter)
+        organization: $(organization)
+        project: ''
+        packageFeedName: $(feedName)
+        packageFeedView: $(reloadedFeedView)
+        packageFeedAccessToken: ${{ coalesce( variables.reloadedFeedAccessToken, '$(System.AccessToken)' ) }}
+        databases:
+        - ${{if eq(variables.resourceLevel, 'tenant')}}:
+          - dbName: Tasks
+            serverName: "$(platformName)-$(tenantShortName)-shared-mssqlsrv"
+            resourceGroupName: "$(platformName)-$(tenantShortName)-tnt-rg"
+            dbDeploymentType: "SQL"
+            useManagedIdentity: true
+            managedIdentities:
+              - name: "$(platformName)-$(tenantShortName)-taskmanagersvc"
+                roles: ["db_datareader", "db_datawriter", "db_ddladmin"]
+        - ${{if eq(variables.resourceLevel, 'env')}}:     
+          - dbName: Tasks
+            serverName: "$(platformName)-$(tenantShortName)-$(environmentShortName)-shared-mssqlsrv"
+            resourceGroupName: "$(platformName)-$(tenantShortName)-$(environmentShortName)-rg"
+            dbDeploymentType: "SQL"
+            useManagedIdentity: true
+            managedIdentities:
+              - name: "$(platformName)-$(tenantShortName)-$(environmentShortName)-taskmanagersvc"
+                roles: ["db_datareader", "db_datawriter", "db_ddladmin"]                                  

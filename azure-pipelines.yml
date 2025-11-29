@@ -1,0 +1,52 @@
+trigger:
+  branches:
+    include:
+    - feature/*
+    - bugfix/*
+    - release/*
+    - hotfix/*
+    - main
+
+pr:
+- feature/*
+- bugfix/*
+- release/*
+- hotfix/*
+- main
+
+pool:
+  name: $(pool)
+
+variables:
+  - group: core-ci-vg
+
+resources:
+  repositories:
+  - repository: templates
+    type: git
+    name: "Matrix.Tools/PipelineAsCode"
+    ref: "master"
+
+stages:
+- template: CI/pipeline-setup-template.yml@templates
+  parameters:
+    sonarAnalysis: true
+    sonarAnalyser: sonarcloud
+    sonarProjectKey: 'fivedegreesbv_TaskManager'
+    sonarProjectName: 'TaskManager'
+    sonarCoverageExclusions: "tests/**"
+    nexusAnalysis: true
+    packages:
+    - packageName: 'TaskManager.Service'
+      packageId: 1
+      project: 'TaskManager.API'
+      packagingType: 'webapp'
+      webJobPackages:
+        - project: TaskManager.BackgroundWorker
+          runMode: 'continuous'
+      targetFramework: 'net6.0'
+    - packageName: 'Tasks'
+      packageId: 2
+      project: 'TaskManager.Infrastructure'
+      packagingType: 'ef'
+      targetFramework: 'netstandard2.1'

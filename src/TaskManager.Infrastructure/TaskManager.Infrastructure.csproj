@@ -1,0 +1,47 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netstandard2.1</TargetFramework>
+    <ProjectGuid>60A29EB3-2DF7-4E87-98F4-5776EC1FF8AB</ProjectGuid>
+    <LangVersion>8</LangVersion>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Remove="Migrations\20200414065607_AddAssignmentToTask.cs" />
+    <Compile Remove="Migrations\20200414065607_AddAssignmentToTask.Designer.cs" />
+    <Compile Remove="Migrations\20200715094334_Add-Comments.cs" />
+    <Compile Remove="Migrations\20200715094334_Add-Comments.Designer.cs" />
+    <Compile Remove="Migrations\20200715094729_Add-Comments.cs" />
+    <Compile Remove="Migrations\20200715094729_Add-Comments.Designer.cs" />
+    <Compile Remove="Migrations\20200716060518_Added-Comments.cs" />
+    <Compile Remove="Migrations\20200716060518_Added-Comments.Designer.cs" />
+    <Compile Remove="Migrations\20210105113426_Test.cs" />
+    <Compile Remove="Migrations\20210105113426_Test.Designer.cs" />
+    <Compile Remove="Migrations\20210106102346_Rename-Relation-Id-To-RelationId.cs" />
+    <Compile Remove="Migrations\20210106102346_Rename-Relation-Id-To-RelationId.Designer.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="AutoMapper" Version="11.0.1" />
+    <PackageReference Include="Autofac" Version="6.4.0" />
+    <PackageReference Include="Azure.Identity" Version="1.7.0" />
+    <PackageReference Include="Azure.Messaging.EventHubs" Version="5.7.2" />
+    <PackageReference Include="Microsoft.Azure.EventGrid" Version="3.2.1" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore" Version="5.0.17" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="5.0.17" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.InMemory" Version="5.0.17" />
+    <PackageReference Include="Microsoft.Extensions.Http" Version="6.0.0" />
+    <PackageReference Include="Rebus" Version="6.6.5" />
+    <PackageReference Include="Rebus.Autofac" Version="8.0.0" />
+    <PackageReference Include="Rebus.AzureServiceBus" Version="8.1.5" />
+    <PackageReference Include="Rebus.Serilog" Version="7.0.0" />
+    <PackageReference Include="System.Text.Json" Version="6.0.6" />
+    <PackageReference Include="Azure.Storage.Files.DataLake" Version="12.11.0" />
+	<PackageReference Include="Microsoft.Extensions.Configuration.Binder" Version="6.0.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\TaskManager.Domain\TaskManager.Domain.csproj" />
+  </ItemGroup>
+
+</Project>
